@@ -1,0 +1,27 @@
+{
+  "name": "scram",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "^7.1.2"
+  },
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bao48/scram.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bao48/scram/issues"
+  },
+  "homepage": "https://github.com/bao48/scram#readme",
+  "devDependencies": {
+    "electron": "^7.1.3"
+  }
+}
