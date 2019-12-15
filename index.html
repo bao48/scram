@@ -19,18 +19,24 @@
 
                 </div>
                 <div class="main">
+                    <div id="column_container">
 
+                    </div>
                 </div>
             </div>
         </div>
 
+
         <div class="overlay" id="add_column">
             <div class="overlay_inner_box" id="col_overlay_inner_box">
                 <h3 class="overlay_title">Add Column</h3>
-                <form accept-charset="UTF-8">
-                    <h4>Add column</h4>
-                    <input type="text" placeholder="Enter your column name">
+                <form accept-charset="UTF-8" name="column-inputs" autocomplete="off">
+                    <h4>Add column name</h4>
+                    <input type="text" id="column_name" placeholder="Enter your column name">
+                    <h4>Add column details</h4>
+                    <input type="text" id="column_details" placeholder="Enter your column details">
                 </form>
+                <button id="save_column" type="button" class="button">Save</button>
             </div>
         </div>
 
@@ -38,10 +44,11 @@
         <div class="overlay" id="add_card">
             <div class="overlay_inner_box" id="card_overlay_inner_box">
                 <h3 class="overlay_title">Add Card</h3>
-                <form accept-charset="UTF-8">
+                <form accept-charset="UTF-8" name="card-inputs" autocomplete="off">
                     <h4>Add Card</h4>
-                    <input type="text" placeholder="Enter your column name">
+                    <input type="text" id="card_name" placeholder="Enter your column name">
                 </form>
+                <button id="save_card" type="button" class="button">save</button>
             </div>
         </div>
 
