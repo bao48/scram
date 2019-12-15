@@ -12,8 +12,8 @@
         <div class="container">
             <div class="columns">
                 <div class="btns">
-                    <button id="new_project" type="button" class="button">New Project</button>
                     <button id="new_column" type="button" class="button">New Column</button>
+                    <button id="new_card" type="button" class="button">New Card</button>
                 </div>
                 <div class="boards">
 
@@ -24,8 +24,25 @@
             </div>
         </div>
 
-        <div class="overlay" id="overlay">
-            <div class="text">hi!!!! :)</div>
+        <div class="overlay" id="add_column">
+            <div class="overlay_inner_box" id="col_overlay_inner_box">
+                <h3 class="overlay_title">Add Column</h3>
+                <form accept-charset="UTF-8">
+                    <h4>Add column</h4>
+                    <input type="text" placeholder="Enter your column name">
+                </form>
+            </div>
+        </div>
+
+
+        <div class="overlay" id="add_card">
+            <div class="overlay_inner_box" id="card_overlay_inner_box">
+                <h3 class="overlay_title">Add Card</h3>
+                <form accept-charset="UTF-8">
+                    <h4>Add Card</h4>
+                    <input type="text" placeholder="Enter your column name">
+                </form>
+            </div>
         </div>
 
         <script src="./index.js"></script>

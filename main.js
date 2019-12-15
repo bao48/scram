@@ -21,13 +21,13 @@ function main () {
     mainWindow.loadFile('index.html')
 
     // recieving start sent by index.js and sending it back to index.js
-    ipcMain.on('new_project', (event, signal) => {
-        mainWindow.send('new_project')
+    ipcMain.on('new_column', (event, signal) => {
+        mainWindow.send('new_column')
     })
 
     // recieving end sent by index.js and sending it back to index.js
-    ipcMain.on('new_column', (event, signal) => {
-        mainWindow.send('new_column')
+    ipcMain.on('new_card', (event, signal) => {
+        mainWindow.send('new_card')
     })
 }
 
