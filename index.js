@@ -2,28 +2,33 @@
 
 const { ipcRenderer } = require('electron')
 
+
+// create and add new_board btn
+// ipcMain in main.js recieves this
+ipcRenderer.on('main_window_ready', (event) => {
+    var card_btn = document.getElementsByClassName('add_card_btn')
+    for (var i = 0; i < card_btn.length; i++) {
+        card_btn[i].addEventListener('click', () => {
+            ipcRenderer.send('new_card')
+        })
+    }
+})
+
 // create and add new_column btn
 // ipcMain in main.js recieves this
 document.getElementById('new_column').addEventListener('click', () => {
     ipcRenderer.send('new_column')
 })
 
-// create and add new_board btn
-// ipcMain in main.js recieves this
-document.getElementById('new_card').addEventListener('click', () => {
-    ipcRenderer.send('new_card')
-})
-
 document.getElementById('save_column').addEventListener('click', () => {
 
     var form_elements = document.forms["column-inputs"].elements
-
-    var name1 = form_elements[0].id
-    var name2 = form_elements[1].id
     
     var column_data = {
-        column_name: form_elements[0].value,
-        column_details: form_elements[1].value,
+        name: form_elements[0].value,
+        details: form_elements[1].value,
+        create_date: new Date().getTime(),
+
     }
     form_elements[0].value = ''
     form_elements[1].value = ''
@@ -33,7 +38,22 @@ document.getElementById('save_column').addEventListener('click', () => {
 })
 
 document.getElementById('save_card').addEventListener('click', () => {
-    ipcRenderer.send('save_card')
+
+    var form_elements = document.forms["card-inputs"].elements
+    
+    var card_data = {
+        name: form_elements[0].value,
+        details: form_elements[1].value,
+        details: form_elements[2].value,
+        due_date: form_elements[3].value,
+        create_date: new Date().getTime(),
+    }
+    form_elements[0].value = ''
+    form_elements[1].value = ''
+    form_elements[2].value = ''
+    form_elements[3].value = ''
+
+    ipcRenderer.send('save_card', card_data)
     document.getElementById('add_card').style.display = "none"
 })
 
@@ -70,8 +90,12 @@ ipcRenderer.on('update-board', (event, columns, cards) => {
 
 ipcRenderer.on('update_columns', (event, columns) => {
     // need to do stuff here
-    console.log('update board!')
     updateColumnsHTML(columns)
+})
+
+ipcRenderer.on('update_cards', (event, columns) => {
+    // need to do stuff here
+    updateCardsHTML(columns)
 })
 
 function updateColumnsHTML(columns) {
@@ -80,12 +104,17 @@ function updateColumnsHTML(columns) {
 
     // create html string
     const column_list_items = columns.reduce((html, column) => {
-        console.log(column)
-        html += `<div class="column_list_element">${column.column_name}</div>`
+        html += `<div class="column_list_element" id="${column.create_date}">${column.column_name}
+                <span class="add_card_btn" id="${column.create_date}_btn">+</span>
+                </div>`
         return html
     }, '')
-    console.log(column_list_items)
 
     // set list html to the todo list items
     column_container.innerHTML = column_list_items
+}
+
+
+function updateCardsHTML(cards) {
+    console.log(':)')
 }

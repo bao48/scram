@@ -22,6 +22,9 @@ function main () {
         }
     })
 
+    mainWindow.webContents.openDevTools()
+    mainWindow.loadFile('index.html')
+
     mainWindow.once('ready-to-show', (event) => {
         mainWindow.show()
     })
@@ -30,10 +33,9 @@ function main () {
     // for some reaason does not work
     mainWindow.once('show', (event) => {
         mainWindow.webContents.send('update_columns', main_data.columns)
+        mainWindow.webContents.send('update_cards', main_data.cards)
+        mainWindow.webContents.send('main_window_ready')
     })
-
-    mainWindow.webContents.openDevTools()
-    mainWindow.loadFile('index.html')
 
     // recieving new_column sent by index.js and sending it back to index.js
     ipcMain.on('new_column', (event) => {
