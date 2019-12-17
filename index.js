@@ -99,6 +99,8 @@ ipcRenderer.on('update_cards', (event, columns) => {
 })
 
 function updateColumnsHTML(columns) {
+
+
     // get columns
     const column_container = document.getElementById('column_container')
 
@@ -109,6 +111,9 @@ function updateColumnsHTML(columns) {
                 </div>`
         return html
     }, '')
+
+    document.getElementsByTagName("BODY")[0].style.width = columns.length * 310 + 'px'
+
 
     // set list html to the todo list items
     column_container.innerHTML = column_list_items

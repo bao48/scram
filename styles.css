@@ -24,11 +24,16 @@
     padding: 10px;
 }
 
+html,
+.columns {
+    height: 100%;
+}
+
 body,
 .container,
 .main {
     height: 100%;
-    width: 100%;
+    overflow-x: scroll;
 }
 
 #column_container {
