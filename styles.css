@@ -34,11 +34,16 @@ body,
 .main {
     height: 100%;
     overflow-x: scroll;
+    overflow-y: hidden;
+}
+
+.main {
+    margin: 10px;
 }
 
 #column_container {
     width: 100%;
-    height: 90%;
+    height: 80%;    
 }
 
 .column_list_element{
@@ -49,8 +54,16 @@ body,
     padding: 1px;
     margin: 2px;
     vertical-align: top;
+    overflow-y: scroll;
 }
 
 .card_box {
     display: block;
+    margin: 3px;
+    background: #FFFFFF;
+    padding: 10px;
+}
+
+.column_name {
+    font-size: 20px;
 }

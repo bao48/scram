@@ -96,15 +96,15 @@ function updateColumnsHTML(columns) {
 
         for (var i = 0; i < column.cards.length; i++) {
             h += `<div class="card_box" id="${column.cards[i].create_date}">
-            ${column.cards[i].name}
-            ${column.cards[i].details}
-            ${column.cards[i].category}
-            ${column.cards[i].due_date}
+            <div class="card_name"><h4>${column.cards[i].name}</h4></div>
+            <div class="card_detail">${column.cards[i].details}</div>
+            <div class="card_cat">${column.cards[i].category}</div>
+            <div class="card_due">${column.cards[i].due_date}</div>
             </div>`
         }
 
         html += `<div class="column_list_element" id="${column.create_date}">
-                    ${column.name}
+                    <span class="column_name">${column.name}</span>
                     <span class="add_card_btn" id="${column.create_date}_btn">+</span>
                     <span class="del_card_btn" id="${column.create_date}_btn">-</span>
                     ${h}
@@ -113,7 +113,7 @@ function updateColumnsHTML(columns) {
     }, '')
 
     if (columns.length != 0) {
-        document.getElementsByTagName("BODY")[0].style.width = columns.length * 310 + 'px'
+        document.getElementsByTagName("BODY")[0].style.width = columns.length * 315 + 'px'
     }
 
     // set list html to the todo list items
