@@ -100,6 +100,7 @@ function updateColumnsHTML(columns) {
             <div class="card_detail">${column.cards[i].details}</div>
             <div class="card_cat">${column.cards[i].category}</div>
             <div class="card_due">${column.cards[i].due_date}</div>
+            <span class="edit_card"><a>edit</a></span>\t<span class="remove_card"><a>remove</a></span>
             </div>`
         }
 
@@ -148,9 +149,13 @@ function updateManualBtns() {
             var data = event.dataTransfer.getData("text")
             var child = document.getElementById(data)
             var child_parent = document.getElementById(data).parentNode.id
-            document.getElementById(data).remove()
-            event.target.appendChild(child)
-            ipcRenderer.send('transfer_card', child_parent, event.target.id, data)
+
+            // check if user actually moved box to another column
+            if (child_parent != event.target.id) {
+                document.getElementById(data).remove()
+                event.target.appendChild(child)
+                ipcRenderer.send('transfer_card', child_parent, event.target.id, data)
+            }
         }
     }
 

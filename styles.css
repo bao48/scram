@@ -67,3 +67,16 @@ body,
 .column_name {
     font-size: 20px;
 }
+
+.edit_card,
+.remove_card {
+    font-size: 10px;
+}
+
+a {
+    color: #758D62;
+}
+
+a:hover {
+    color: #9CAC81;
+}
