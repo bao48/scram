@@ -60,6 +60,23 @@ class DataStore extends Store {
 
         return this.saveCards()
     }
+
+
+    transferCard(start_col_id, end_col_id, card_id) {
+        var end_index
+        for (var i = 0; i < this.columns.length; i++) {
+            if (this.columns[i].create_date == end_col_id) {
+                end_index = i
+            }
+
+            if (this.columns[i].create_date == start_col_id) {
+                var [revised_col, card] = this.columns[i].pop(card_id)
+                this.columns[i] = revised_col
+            }
+        }
+        this.columns[end_index] = this.columns[end_index].addCard(card)
+        return this.saveColumns()
+    }
 }
 
 module.exports = DataStore

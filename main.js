@@ -63,6 +63,10 @@ function main () {
         mainWindow.send('new_column')
     })
     
+    ipcMain.on('transfer_card', (event, start_col_id, end_col_id, card_id) => {
+        main_data.columns = main_data.transferCard(start_col_id, end_col_id, card_id).columns
+    })
+
 }
 
 app.on('ready', main)

@@ -95,7 +95,7 @@ function updateColumnsHTML(columns) {
         var h = ''
 
         for (var i = 0; i < column.cards.length; i++) {
-            h += `<div class="card_box" id="${column.cards[i].create_date}">
+            h += `<div class="card_box" draggable="true" id="${column.cards[i].create_date}">
             <div class="card_name"><h4>${column.cards[i].name}</h4></div>
             <div class="card_detail">${column.cards[i].details}</div>
             <div class="card_cat">${column.cards[i].category}</div>
@@ -113,7 +113,7 @@ function updateColumnsHTML(columns) {
     }, '')
 
     if (columns.length != 0) {
-        document.getElementsByTagName("BODY")[0].style.width = columns.length * 315 + 'px'
+        document.getElementsByTagName("BODY")[0].style.width = columns.length * 310 + 20 + 'px'
     }
 
     // set list html to the todo list items
@@ -137,5 +137,28 @@ function updateManualBtns() {
             console.log('del')
             ipcRenderer.send('del_card', e.target.id)
         })
+    }
+    var col_boxes = document.getElementsByClassName("column_list_element")
+    for (var i = 0; i < col_boxes.length; i++) {
+        col_boxes[i].ondragover = (event) => {
+            event.preventDefault()
+        }
+        col_boxes[i].ondrop = (event) => {
+            event.preventDefault()
+            var data = event.dataTransfer.getData("text")
+            var child = document.getElementById(data)
+            var child_parent = document.getElementById(data).parentNode.id
+            document.getElementById(data).remove()
+            event.target.appendChild(child)
+            ipcRenderer.send('transfer_card', child_parent, event.target.id, data)
+        }
+    }
+
+    var card_boxes = document.getElementsByClassName("card_box")
+    for (var i = 0; i < card_boxes.length; i++) {
+        card_boxes[i].ondragstart = (event) => {
+            event.dataTransfer.setData("text", event.target.id)
+            console.log(event.target.id)
+        }
     }
 }
