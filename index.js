@@ -114,7 +114,7 @@ function updateColumnsHTML(columns) {
     }, '')
 
     if (columns.length != 0) {
-        document.getElementsByTagName("BODY")[0].style.width = columns.length * 310 + 30 + 'px'
+        document.getElementsByTagName("BODY")[0].style.width = columns.length * 315 + 20 + 'px'
     }
 
     // set list html to the todo list items
