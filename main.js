@@ -62,6 +62,12 @@ function main () {
     ipcMain.on('del_column', (event) => {
         mainWindow.send('new_column')
     })
+
+    // recieving new_column sent by index.js and sending it back to index.js
+    ipcMain.on('del_card', (event, card_id, column_id) => {
+        const updatedColumns = main_data.deleteCard(card_id, column_id).columns
+        mainWindow.send('update_columns', updatedColumns)
+    })
     
     ipcMain.on('transfer_card', (event, start_col_id, end_col_id, card_id) => {
         main_data.columns = main_data.transferCard(start_col_id, end_col_id, card_id).columns

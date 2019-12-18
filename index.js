@@ -36,7 +36,7 @@ document.getElementById('save_card').addEventListener('click', () => {
     var column_id = document.getElementById("add_card").title
     column_id = parseInt(column_id.substring(0, column_id.length-4))
 
-    console.log("colid", column_id)
+    console.log("col_id", column_id)
 
     var card_data = new Card(form_elements[0].value, form_elements[1].value, form_elements[2].value, form_elements[3].value, column_id)
 
@@ -114,7 +114,7 @@ function updateColumnsHTML(columns) {
     }, '')
 
     if (columns.length != 0) {
-        document.getElementsByTagName("BODY")[0].style.width = columns.length * 310 + 20 + 'px'
+        document.getElementsByTagName("BODY")[0].style.width = columns.length * 310 + 30 + 'px'
     }
 
     // set list html to the todo list items
@@ -139,6 +139,14 @@ function updateManualBtns() {
             ipcRenderer.send('del_card', e.target.id)
         })
     }
+
+    var d_card_btn = document.getElementsByClassName("remove_card")
+    for (var i = 0; i < d_card_btn.length; i++) {
+        d_card_btn[i].addEventListener('click', (e) => {
+            ipcRenderer.send('del_card', e.target.parentNode.parentNode.id, e.target.parentNode.parentNode.parentNode.id)
+        })
+    }
+
     var col_boxes = document.getElementsByClassName("column_list_element")
     for (var i = 0; i < col_boxes.length; i++) {
         col_boxes[i].ondragover = (event) => {

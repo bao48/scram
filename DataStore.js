@@ -54,11 +54,20 @@ class DataStore extends Store {
         return this.saveColumns()
     }
 
-    deleteCards(card_data) {
+    deleteCard(card_id, column_id) {
         // filter out the non target cards
-        this.cards = this.cards.filter(t => t != card_data)
-
-        return this.saveCards()
+        for (var i = 0; i < this.columns.length; i++) {
+            if (this.columns[i].create_date == column_id) {
+                if (this.columns[i].cards.length == 1) {
+                    this.columns[i].cards = []
+                    return this.saveColumns()
+                } else {
+                    var [revised_col, card] = this.columns[i].pop(card_id)
+                    this.columns[i] = revised_col
+                    return this.saveColumns()
+                }
+            }
+        }
     }
 
 
