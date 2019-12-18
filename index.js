@@ -105,9 +105,9 @@ function updateColumnsHTML(columns) {
         }
 
         html += `<div class="column_list_element" id="${column.create_date}">
-                    <span class="column_name">${column.name}</span>
+                    <div class="column_header"><span class="column_name">${column.name}</span>
                     <span class="add_card_btn" id="${column.create_date}_btn">+</span>
-                    <span class="del_card_btn" id="${column.create_date}_btn">-</span>
+                    <span class="del_card_btn" id="${column.create_date}_btn">-</span></div>
                     ${h}
                 </div>`
         return html

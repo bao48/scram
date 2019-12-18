@@ -51,7 +51,7 @@ body,
     width: 300px;
     display: inline-block;
     height: 100%;
-    padding: 1px;
+    padding: 5px;
     margin: 2px;
     vertical-align: top;
     overflow-y: scroll;
@@ -79,4 +79,9 @@ a {
 
 a:hover {
     color: #9CAC81;
+}
+
+.column_header {
+    font-size: 15px;
+    padding: 7px;
 }
