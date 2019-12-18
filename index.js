@@ -100,14 +100,15 @@ function updateColumnsHTML(columns) {
             <div class="card_detail">${column.cards[i].details}</div>
             <div class="card_cat">${column.cards[i].category}</div>
             <div class="card_due">${column.cards[i].due_date}</div>
-            <span class="edit_card"><a>edit</a></span>\t<span class="remove_card"><a>remove</a></span>
+            <span class="edit_card"><a>edit</a></span>\t
+            <span class="remove_card"><a>remove</a></span>\t
+            <span class="start_timer"><a>spent: <span class="time_spent">0</span></a></span>
             </div>`
         }
 
         html += `<div class="column_list_element" id="${column.create_date}">
                     <div class="column_header"><span class="column_name">${column.name}</span>
-                    <span class="add_card_btn" id="${column.create_date}_btn">+</span>
-                    <span class="del_card_btn" id="${column.create_date}_btn">-</span></div>
+                    <span class="add_card_btn" id="${column.create_date}_btn">+</span></div>
                     ${h}
                 </div>`
         return html
@@ -126,17 +127,9 @@ function updateColumnsHTML(columns) {
 
 function updateManualBtns() {
     var a_card_btn = document.getElementsByClassName('add_card_btn')
-    var d_card_btn = document.getElementsByClassName('del_card_btn')
     for (var i = 0; i < a_card_btn.length; i++) {
-        console.log(a_card_btn[i])
-        console.log(a_card_btn[i].id)
         a_card_btn[i].addEventListener('click', (e) => {
             ipcRenderer.send('new_card', e.target.id)
-        })
-        d_card_btn[i].addEventListener('click', (e) => {
-            // this needs to be finished
-            console.log('del')
-            ipcRenderer.send('del_card', e.target.id)
         })
     }
 
@@ -174,4 +167,5 @@ function updateManualBtns() {
             console.log(event.target.id)
         }
     }
+
 }
