@@ -33,7 +33,6 @@ function main () {
     // for some reaason does not work
     mainWindow.once('show', (event) => {
         mainWindow.webContents.send('update_columns', main_data.columns)
-        mainWindow.webContents.send('update_cards', main_data.cards)
         mainWindow.webContents.send('main_window_ready')
     })
 
@@ -43,8 +42,8 @@ function main () {
     })
 
     // recieving new_card sent by index.js and sending it back to index.js
-    ipcMain.on('new_card', (event) => {
-        mainWindow.send('new_card')
+    ipcMain.on('new_card', (event, column_id) => {
+        mainWindow.send('new_card', column_id)
     })
 
     // recieving save_column sent by index.js and sending it back to index.js
@@ -54,9 +53,16 @@ function main () {
     })
 
     // recieving save_card sent by index.js and sending it back to index.js
-    ipcMain.on('save_card', (event, signal) => {
-        mainWindow.send('update_card')
+    ipcMain.on('save_card', (event, card_data, column_id) => {
+        const updatedColumns = main_data.addCard(card_data, column_id).columns
+        mainWindow.send('update_columns', updatedColumns)
     })
+
+    // recieving new_column sent by index.js and sending it back to index.js
+    ipcMain.on('del_column', (event) => {
+        mainWindow.send('new_column')
+    })
+    
 }
 
 app.on('ready', main)

@@ -1,17 +1,14 @@
 'use strict'
 
 const { ipcRenderer } = require('electron')
+const Column = require('./Column')
+const Card = require('./Card')
 
 
 // create and add new_board btn
 // ipcMain in main.js recieves this
 ipcRenderer.on('main_window_ready', (event) => {
-    var card_btn = document.getElementsByClassName('add_card_btn')
-    for (var i = 0; i < card_btn.length; i++) {
-        card_btn[i].addEventListener('click', () => {
-            ipcRenderer.send('new_card')
-        })
-    }
+    updateManualBtns()
 })
 
 // create and add new_column btn
@@ -23,61 +20,56 @@ document.getElementById('new_column').addEventListener('click', () => {
 document.getElementById('save_column').addEventListener('click', () => {
 
     var form_elements = document.forms["column-inputs"].elements
-    
-    var column_data = {
-        name: form_elements[0].value,
-        details: form_elements[1].value,
-        create_date: new Date().getTime(),
 
-    }
+    var col = new Column(form_elements[0].value, form_elements[1].value)
+    
     form_elements[0].value = ''
     form_elements[1].value = ''
 
-    ipcRenderer.send('save_column', column_data)
+    ipcRenderer.send('save_column', col)
     document.getElementById('add_column').style.display = "none"
 })
 
 document.getElementById('save_card').addEventListener('click', () => {
 
     var form_elements = document.forms["card-inputs"].elements
-    
-    var card_data = {
-        name: form_elements[0].value,
-        details: form_elements[1].value,
-        details: form_elements[2].value,
-        due_date: form_elements[3].value,
-        create_date: new Date().getTime(),
-    }
+    var column_id = document.getElementById("add_card").title
+    column_id = parseInt(column_id.substring(0, column_id.length-4))
+
+    console.log("colid", column_id)
+
+    var card_data = new Card(form_elements[0].value, form_elements[1].value, form_elements[2].value, form_elements[3].value, column_id)
+
     form_elements[0].value = ''
     form_elements[1].value = ''
     form_elements[2].value = ''
     form_elements[3].value = ''
 
-    ipcRenderer.send('save_card', card_data)
+    ipcRenderer.send('save_card', card_data, column_id)
     document.getElementById('add_card').style.display = "none"
 })
 
-
 document.getElementById('add_column').addEventListener('click', (e) => {
-    var isClickInside = document.getElementById('col_overlay_inner_box').contains(e.target);
+    var isClickInside = document.getElementById('col_overlay_inner_box').contains(e.target)
     if (!isClickInside) {
         document.getElementById('add_column').style.display = "none"
     }
 })
 
 document.getElementById('add_card').addEventListener('click', (e) => {
-    var isClickInside = document.getElementById('card_overlay_inner_box').contains(e.target);
+    var isClickInside = document.getElementById('card_overlay_inner_box').contains(e.target)
     if (!isClickInside) {
         document.getElementById('add_card').style.display = "none"
     }
 })
 
 ipcRenderer.on('new_column', (event) => {
-    document.getElementById("add_column").style.display = "block";
+    document.getElementById("add_column").style.display = "block"
 })
 
-ipcRenderer.on('new_card', (event) => {
-    document.getElementById("add_card").style.display = "block";
+ipcRenderer.on('new_card', (event, column_id) => {
+    document.getElementById("add_card").style.display = "block"
+    document.getElementById("add_card").title = column_id
 })
 
 
@@ -93,33 +85,57 @@ ipcRenderer.on('update_columns', (event, columns) => {
     updateColumnsHTML(columns)
 })
 
-ipcRenderer.on('update_cards', (event, columns) => {
-    // need to do stuff here
-    updateCardsHTML(columns)
-})
-
 function updateColumnsHTML(columns) {
-
-
     // get columns
     const column_container = document.getElementById('column_container')
 
     // create html string
     const column_list_items = columns.reduce((html, column) => {
-        html += `<div class="column_list_element" id="${column.create_date}">${column.column_name}
-                <span class="add_card_btn" id="${column.create_date}_btn">+</span>
+
+        var h = ''
+
+        for (var i = 0; i < column.cards.length; i++) {
+            h += `<div class="card_box" id="${column.cards[i].create_date}">
+            ${column.cards[i].name}
+            ${column.cards[i].details}
+            ${column.cards[i].category}
+            ${column.cards[i].due_date}
+            </div>`
+        }
+
+        html += `<div class="column_list_element" id="${column.create_date}">
+                    ${column.name}
+                    <span class="add_card_btn" id="${column.create_date}_btn">+</span>
+                    <span class="del_card_btn" id="${column.create_date}_btn">-</span>
+                    ${h}
                 </div>`
         return html
     }, '')
 
-    document.getElementsByTagName("BODY")[0].style.width = columns.length * 310 + 'px'
-
+    if (columns.length != 0) {
+        document.getElementsByTagName("BODY")[0].style.width = columns.length * 320 + 'px'
+    }
 
     // set list html to the todo list items
     column_container.innerHTML = column_list_items
+
+    updateManualBtns()
 }
 
 
-function updateCardsHTML(cards) {
-    console.log(':)')
+function updateManualBtns() {
+    var a_card_btn = document.getElementsByClassName('add_card_btn')
+    var d_card_btn = document.getElementsByClassName('del_card_btn')
+    for (var i = 0; i < a_card_btn.length; i++) {
+        console.log(a_card_btn[i])
+        console.log(a_card_btn[i].id)
+        a_card_btn[i].addEventListener('click', (e) => {
+            ipcRenderer.send('new_card', e.target.id)
+        })
+        d_card_btn[i].addEventListener('click', (e) => {
+            // this needs to be finished
+            console.log('del')
+            ipcRenderer.send('del_card', e.target.id)
+        })
+    }
 }

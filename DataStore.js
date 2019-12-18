@@ -1,6 +1,8 @@
 'use strict'
 
 const Store = require('electron-store')
+const Column = require('./Column')
+const Card = require('./Card')
 
 class DataStore extends Store {
     constructor (settings) {
@@ -9,23 +11,19 @@ class DataStore extends Store {
         super(settings)
 
         // initialize with todos or empty array
+        
         this.columns = this.get("columns") || []
-        this.cards = this.get("cards") || []
+        for (var i = 0; i < this.columns.length; i++) {
+            this.columns[i] = new Column().createColumnFromDataStore(this.columns[i])
+        }
+        console.log(this.columns)
     }
 
     saveColumns() {
         // saves columns to json file
         this.set("columns", this.columns)
 
-        // method chaining
-        return this
-    }
-
-    saveCards() {
-        // saves cards to json file
-        this.set("cards", this.cards)
-
-        // method chaining
+        // method chainings
         return this
     }
 
@@ -37,10 +35,14 @@ class DataStore extends Store {
         return this.saveColumns()
     }
 
-    addCards(card_data) {
+    addCard(card_data, column_id) {
         // assume already in json-ish format
         // merge existing cards with new card
-        this.cards = [...this.cards, card_data]
+        for (var i = 0; i < this.columns.length; i++) {
+            if (this.columns[i].getID() == column_id) {
+                this.columns[i].addCard(card_data)
+            }
+        }
         
         return this.saveColumns()
     }
