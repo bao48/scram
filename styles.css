@@ -44,11 +44,13 @@ body,
 .column_list_element{
     background-color: #A0A0A0;
     width: 300px;
-    position: relative;
     display: inline-block;
     height: 100%;
     padding: 1px;
     margin: 2px;
+    vertical-align: top;
 }
 
-
+.card_box {
+    display: block;
+}
