@@ -85,9 +85,8 @@ ipcRenderer.on('update_timer', (event, card_id, timer_status, time_worked) => {
     var spent = time_worked
     if (timer_status === "ON") {
         var timerId = setInterval(function() {
-            spent += 1
-            console.log(card_container.id)
             card_container.getElementsByClassName("time_spent")[0].innerHTML = spent
+            spent += 1
         }, 1000)
         card_container.id = timerId
     } else {
@@ -148,7 +147,7 @@ function updateColumnsHTML(columns) {
             <div class="card_due">${column.cards[i].due_date}</div>
             <span class="edit_card"><a>edit</a></span>\t
             <span class="remove_card"><a>remove</a></span>\t
-            <span class="timer"><a>spent: <span class="time_spent">0</span></a></span>
+            <span class="timer"><a>spent: <span class="time_spent">${column.cards[i].timeWorked}</span></a></span>
             </div>`
         }
 
