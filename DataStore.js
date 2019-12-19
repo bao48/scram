@@ -88,12 +88,12 @@ class DataStore extends Store {
         // filter out the non target cards
         for (var i = 0; i < this.columns.length; i++) {
             if (this.columns[i].create_date == column_id) {
-                var [column, timerStatus, timeWorked] = this.columns[i].updateTimerStatus(card_id)
-                this.columns[i] = column
+                var [col, timerStatus, timeWorked] = this.columns[i].updateTimerStatus(card_id)
+                this.columns[i] = col
+                return [this.saveColumns(), timerStatus, timeWorked]
             }
         }
-        
-        return [this.saveColumns(), timerStatus, timeWorked]
+
     }
 
 }
