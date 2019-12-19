@@ -14,7 +14,7 @@ ipcRenderer.on('main_window_ready', (event) => {
 // create and add new_column btn
 // ipcMain in main.js recieves this
 document.getElementById('new_column').addEventListener('click', () => {
-    ipcRenderer.send('new_column')
+    document.getElementById("add_column").style.display = "block"
 })
 
 document.getElementById('save_column').addEventListener('click', () => {
@@ -69,10 +69,6 @@ document.getElementById('add_card').addEventListener('click', (e) => {
     }
 })
 
-ipcRenderer.on('new_column', (event) => {
-    document.getElementById("add_column").style.display = "block"
-})
-
 ipcRenderer.on('new_card', (event, column_id) => {
     document.getElementById("add_card").style.display = "block"
     document.getElementById("add_card").title = column_id
@@ -98,8 +94,6 @@ ipcRenderer.on('update_timer', (event, card_id, timer_status, time_worked) => {
         clearInterval(card_container.id)
     }
     
-
-    // <span class="timer"><a>spent: <span class="time_spent">0</span></a></span>
 })
 
 function addNewColumn(column_data) {
@@ -111,15 +105,10 @@ function addNewColumn(column_data) {
     </div>`
 
     var w = document.getElementsByTagName("BODY")[0].style.width
+    document.getElementsByTagName("BODY")[0].style.width = parseInt(w.substring(0, w.length-2)) + 500 + 'px'
 
-    document.getElementsByTagName("BODY")[0].style.width = parseInt(w.substring(0, w.length-2)) + 315 + 'px'
-
-    // update + btn
-    updateAddCardBtnInCard(document.getElementById(column_data.create_date).getElementsByClassName("add_card_btn")[0])
-
-    // update draggable content
-    updateColumnDragEffect(document.getElementById(column_data.create_date))
-    
+    // update all eventlisteners bc DOM changed
+    updateManualBtns()
 }
 
 
@@ -137,10 +126,9 @@ function addNewCard(card_data, column_id) {
     <span class="timer"><a>spent: <span class="time_spent">0</span></a></span>
     </div>`
 
-    var card_element = document.getElementById(card_data.create_date)
-    updateCardDragEffect(card_element)
-    updateRemoveCardBtnInCard(card_element.getElementsByClassName("remove_card")[0])
-    updateTimerBtnInCard(card_element.getElementsByClassName("timer")[0])
+    // update all eventlisteners bc DOM changed
+    updateManualBtns()
+
 }
 
 function updateColumnsHTML(columns) {
@@ -200,7 +188,7 @@ function updateManualBtns() {
     // add event listeners to + sign
     var a_card_btn = document.getElementsByClassName('add_card_btn')
     for (var i = 0; i < a_card_btn.length; i++) {
-        updateAddCardBtnInCard(a_card_btn[i])
+        updateAddCardBtnInColumn(a_card_btn[i])
     }
 
     // add event listeners to "remove" btn in card
@@ -215,16 +203,6 @@ function updateManualBtns() {
         updateTimerBtnInCard(card_timers[i])
     }
 }
-
-function changeTimerId(e_obj, start_id, card_id, column_id) {
-    if (start_id === "") {
-        console.log("start timer")
-        e_obj.target.id = card_id + "_" + column_id
-    } else {
-        console.log("end timer")
-    }
-}
-
 
 // updating all the btns
 function updateColumnDragEffect(elem) {
@@ -253,8 +231,9 @@ function updateCardDragEffect(elem) {
     }
 }
 
-function updateAddCardBtnInCard(elem) {
+function updateAddCardBtnInColumn(elem) {
     elem.addEventListener('click', (e) => {
+        console.log("new card")
         ipcRenderer.send('new_card', e.target.id)
     })
 }
