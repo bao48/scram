@@ -70,6 +70,12 @@ function main () {
         main_data.columns = main_data.transferCard(start_col_id, end_col_id, card_id).columns
     })
 
+    ipcMain.on('timer', (event, card_id, column_id) => {
+        var [columns, timerStatus, timeWorked] = main_data.timer(card_id, column_id)
+        main_data.columns = columns
+        mainWindow.send('update_timer', card_id, timerStatus, timeWorked)
+    })
+
 }
 
 app.on('ready', main)

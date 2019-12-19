@@ -1,5 +1,6 @@
 
 const Card = require('./Card')
+const Timer = require('./Timer')
 
 
 class Column {
@@ -8,6 +9,7 @@ class Column {
         this.details = details || ''
         this.create_date = create_date || new Date().getTime()
         this.cards = cards || []
+        this.num = 0
     }
 
     addCard(card) {
@@ -42,6 +44,16 @@ class Column {
             if (this.cards[i].create_date == card_id) {
                 var card = this.cards.splice(i, 1)[0]
                 return [this, card]
+            }
+        }
+    }
+
+    updateTimerStatus(card_id) {
+        for (var i = 0; i < this.cards.length; i++) {
+            if (this.cards[i].create_date == card_id) {
+                var [card, status, timeWorked] = this.cards[i].startOrEndTimer()
+                this.cards[i] = card
+                return [this, status, timeWorked]
             }
         }
     }

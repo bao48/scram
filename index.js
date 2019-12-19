@@ -83,6 +83,25 @@ ipcRenderer.on('update_columns', (event, columns) => {
     updateColumnsHTML(columns)
 })
 
+ipcRenderer.on('update_timer', (event, card_id, timer_status, time_worked) => {
+    const card_container = document.getElementById(card_id).getElementsByClassName("timer")[0]
+
+    var spent = time_worked
+    if (timer_status === "ON") {
+        var timerId = setInterval(function() {
+            spent += 1
+            console.log(card_container.id)
+            card_container.getElementsByClassName("time_spent")[0].innerHTML = spent
+        }, 1000)
+        card_container.id = timerId
+    } else {
+        clearInterval(card_container.id)
+    }
+    
+
+    // <span class="timer"><a>spent: <span class="time_spent">0</span></a></span>
+})
+
 function addNewColumn(column_data) {
     const column_container = document.getElementById('column_container')
 
@@ -207,7 +226,7 @@ function changeTimerId(e_obj, start_id, card_id, column_id) {
 }
 
 
-//
+// updating all the btns
 function updateColumnDragEffect(elem) {
     elem.ondragover = (event) => {
         event.preventDefault()
@@ -255,7 +274,9 @@ function updateTimerBtnInCard(elem) {
         // start id     e.target.id
         // card id          e.target.parentNode.parentNode.id
         // column id        e.target.parentNode.parentNode.parentNode.id
-        changeTimerId(e, e.target.id, e.target.parentNode.parentNode.id, e.target.parentNode.parentNode.parentNode.id)
+        console.log("start/end timer")
+        ipcRenderer.send('timer', e.target.parentNode.parentNode.id, e.target.parentNode.parentNode.parentNode.id)
+
         console.log(e.target.id)
     })
 }

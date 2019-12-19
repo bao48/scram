@@ -16,7 +16,6 @@ class DataStore extends Store {
         for (var i = 0; i < this.columns.length; i++) {
             this.columns[i] = new Column().createColumnFromDataStore(this.columns[i])
         }
-        console.log(this.columns)
     }
 
     saveColumns() {
@@ -31,7 +30,6 @@ class DataStore extends Store {
         // assume already in json-ish format
         // merge existing columns with new column
         this.columns = [...this.columns, column_data]
-
         return this.saveColumns()
     }
 
@@ -70,7 +68,6 @@ class DataStore extends Store {
         }
     }
 
-
     transferCard(start_col_id, end_col_id, card_id) {
         var end_index
         for (var i = 0; i < this.columns.length; i++) {
@@ -86,6 +83,19 @@ class DataStore extends Store {
         this.columns[end_index] = this.columns[end_index].addCard(card)
         return this.saveColumns()
     }
+
+    timer(card_id, column_id) {
+        // filter out the non target cards
+        for (var i = 0; i < this.columns.length; i++) {
+            if (this.columns[i].create_date == column_id) {
+                var [column, timerStatus, timeWorked] = this.columns[i].updateTimerStatus(card_id)
+                this.columns[i] = column
+            }
+        }
+        
+        return [this.saveColumns(), timerStatus, timeWorked]
+    }
+
 }
 
 module.exports = DataStore
