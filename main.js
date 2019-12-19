@@ -36,6 +36,7 @@ function main () {
         mainWindow.webContents.send('main_window_ready')
     })
 
+
     // recieving new_card sent by index.js and sending it back to index.js
     ipcMain.on('new_card', (event, column_id) => {
         mainWindow.send('new_card', column_id)

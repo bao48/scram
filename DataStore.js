@@ -29,7 +29,8 @@ class DataStore extends Store {
     addColumn(column_data) {
         // assume already in json-ish format
         // merge existing columns with new column
-        this.columns = [...this.columns, column_data]
+        var col = new Column().createColumnFromDataStore(column_data)
+        this.columns = [...this.columns, col]
         return this.saveColumns()
     }
 
@@ -38,10 +39,11 @@ class DataStore extends Store {
         // merge existing cards with new card
         for (var i = 0; i < this.columns.length; i++) {
             if (this.columns[i].getID() == column_id) {
-                this.columns[i].addCard(card_data)
+                var card = new Card().createCardFromDataStore(card_data)
+                this.columns[i].addCard(card)
             }
         }
-        
+        console.log(this.columns)
         return this.saveColumns()
     }
 
