@@ -85,7 +85,8 @@ ipcRenderer.on('update_timer', (event, card_id, timer_status, time_worked) => {
     var spent = time_worked
     if (timer_status === "ON") {
         var timerId = setInterval(function() {
-            card_container.getElementsByClassName("time_spent")[0].innerHTML = spent
+            console.log(spent)
+            card_container.getElementsByClassName("time_spent")[0].innerHTML = formatTime(spent)
             spent += 1
         }, 1000)
         card_container.id = timerId
@@ -147,7 +148,7 @@ function updateColumnsHTML(columns) {
             <div class="card_due">${column.cards[i].due_date}</div>
             <span class="edit_card"><a>edit</a></span>\t
             <span class="remove_card"><a>remove</a></span>\t
-            <span class="timer"><a>spent: <span class="time_spent">${column.cards[i].timeWorked}</span></a></span>
+            <span class="timer"><a>spent: <span class="time_spent">${formatTime(column.cards[i].timeWorked)}</span></a></span>
             </div>`
         }
 
@@ -168,6 +169,23 @@ function updateColumnsHTML(columns) {
 
     updateManualBtns()
 
+}
+
+function formatTime(sec) {
+    var min = Math.floor(sec / 60)
+
+    if (min < 1) {
+        return sec + "s"
+    }
+    sec %= 60
+    
+    var hr = Math.floor(min / 60)
+    if (hr < 1) {
+        return min + "m" + sec + "s"
+    }
+    min %= 60
+
+    return hr + "h" + min + "m" + time_in_sec + "s"
 }
 
 function updateManualBtns() {
@@ -241,15 +259,12 @@ function updateRemoveCardBtnInCard(elem) {
     elem.addEventListener('click', (e) => {
         // card id          e.target.parentNode.parentNode.id
         // column id        e.target.parentNode.parentNode.parentNode.id
-
-        if (e.target.parentNode.parentNode.id) {
-            ipcRenderer.send('del_card', e.target.parentNode.parentNode.id, e.target.parentNode.parentNode.parentNode.id)
-            document.getElementById(e.target.parentNode.parentNode.id).remove()
-        } else {
-            ipcRenderer.send('del_card', e.target.parentNode.parentNode.parentNode.id, e.target.parentNode.parentNode.parentNode.parentNode.id)
-            document.getElementById(e.target.parentNode.parentNode.parentNode.id).remove()
+        var node = e.target
+        while (!node.id || !node.parentNode.id || node.id.length !== node.parentNode.id.length) {
+            node = node.parentNode
         }
-        
+        ipcRenderer.send('del_card', node.id, node.parentNode.id)
+        document.getElementById(node.id).remove() 
     })
 }
 
@@ -259,12 +274,10 @@ function updateTimerBtnInCard(elem) {
         // card id          e.target.parentNode.parentNode.id
         // column id        e.target.parentNode.parentNode.parentNode.id
 
-        if (e.target.parentNode.parentNode.id) {
-            ipcRenderer.send('timer', e.target.parentNode.parentNode.id, e.target.parentNode.parentNode.parentNode.id)
-        } else {
-            ipcRenderer.send('timer', e.target.parentNode.parentNode.parentNode.id, e.target.parentNode.parentNode.parentNode.parentNode.id)
+        var node = e.target
+        while (!node.id || !node.parentNode.id || node.id.length !== node.parentNode.id.length) {
+            node = node.parentNode
         }
-
-        console.log(e.target.id)
+        ipcRenderer.send('timer', node.id, node.parentNode.id)
     })
 }

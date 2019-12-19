@@ -1,7 +1,7 @@
 class Timer {
 
     constructor(start, end, status) {
-        this.start = start || Math.round(new Date().getTime()/1000)*1000
+        this.start = start || Math.floor(new Date().getTime()/1000)*1000
         this.end = end || ""
 
         this.status = (this.end === "") ? "ON": "OFF"
@@ -10,7 +10,7 @@ class Timer {
     }
 
     stopTimer() {
-        this.end = Math.round(new Date().getTime()/1000)*1000
+        this.end = Math.floor(new Date().getTime()/1000)*1000
         return this.updateStatusAndTime()
     }
 
