@@ -96,6 +96,8 @@ class DataStore extends Store {
             }
         }
 
+        console.error("No matching columns found. Card id " + card_id + " column_id " + column_id )
+
     }
 
 }

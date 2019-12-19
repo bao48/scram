@@ -67,6 +67,9 @@ function main () {
     })
 
     ipcMain.on('timer', (event, card_id, column_id) => {
+        console.log("main_data")
+        console.log(main_data)
+        console.log(main_data.timer(card_id, column_id))
         var [data, timerStatus, timeWorked] = main_data.timer(card_id, column_id)
         main_data.columns = data.columns
         mainWindow.send('update_timer', card_id, timerStatus, timeWorked)
