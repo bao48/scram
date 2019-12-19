@@ -68,6 +68,7 @@ class DataStore extends Store {
                 }
             }
         }
+        console.error("No matching columns found. Card id " + card_id + " column_id " + column_id )
     }
 
     transferCard(start_col_id, end_col_id, card_id) {

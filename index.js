@@ -242,17 +242,23 @@ function updateRemoveCardBtnInCard(elem) {
         // card id          e.target.parentNode.parentNode.id
         // column id        e.target.parentNode.parentNode.parentNode.id
 
-        ipcRenderer.send('del_card', e.target.parentNode.parentNode.id, e.target.parentNode.parentNode.parentNode.id)
-
-        document.getElementById(e.target.parentNode.parentNode.id).remove()
+        if (e.target.parentNode.parentNode.id) {
+            ipcRenderer.send('del_card', e.target.parentNode.parentNode.id, e.target.parentNode.parentNode.parentNode.id)
+            document.getElementById(e.target.parentNode.parentNode.id).remove()
+        } else {
+            ipcRenderer.send('del_card', e.target.parentNode.parentNode.parentNode.id, e.target.parentNode.parentNode.parentNode.parentNode.id)
+            document.getElementById(e.target.parentNode.parentNode.parentNode.id).remove()
+        }
+        
     })
 }
 
 function updateTimerBtnInCard(elem) {
     elem.addEventListener('click', (e) => {
-        // start id     e.target.id
+        // start id         e.target.id
         // card id          e.target.parentNode.parentNode.id
         // column id        e.target.parentNode.parentNode.parentNode.id
+
         if (e.target.parentNode.parentNode.id) {
             ipcRenderer.send('timer', e.target.parentNode.parentNode.id, e.target.parentNode.parentNode.parentNode.id)
         } else {
