@@ -8,7 +8,7 @@ const Card = require('./Card')
 // create and add new_board btn
 // ipcMain in main.js recieves this
 ipcRenderer.on('main_window_ready', (event) => {
-    updateManualBtns()
+    console.log("main window ready")
 })
 
 // create and add new_column btn
@@ -27,6 +27,9 @@ document.getElementById('save_column').addEventListener('click', () => {
     form_elements[1].value = ''
 
     ipcRenderer.send('save_column', col)
+
+    addNewColumn(col)
+
     document.getElementById('add_column').style.display = "none"
 })
 
@@ -46,6 +49,9 @@ document.getElementById('save_card').addEventListener('click', () => {
     form_elements[3].value = ''
 
     ipcRenderer.send('save_card', card_data, column_id)
+
+    addNewCard(card_data, column_id)
+
     document.getElementById('add_card').style.display = "none"
 })
 
@@ -72,18 +78,51 @@ ipcRenderer.on('new_card', (event, column_id) => {
     document.getElementById("add_card").title = column_id
 })
 
-
-ipcRenderer.on('update-board', (event, columns, cards) => {
-    // need to do stuff here
-    console.log('update board!')
-
-    updateColumnsHTML(columns)
-})
-
 ipcRenderer.on('update_columns', (event, columns) => {
     // need to do stuff here
     updateColumnsHTML(columns)
 })
+
+function addNewColumn(column_data) {
+    const column_container = document.getElementById('column_container')
+
+    column_container.innerHTML += `<div class="column_list_element" id="${column_data.create_date}">
+    <div class="column_header"><span class="column_name">${column_data.name}</span>
+    <span class="add_card_btn" id="${column_data.create_date}_btn">+</span></div>
+    </div>`
+
+    var w = document.getElementsByTagName("BODY")[0].style.width
+
+    document.getElementsByTagName("BODY")[0].style.width = parseInt(w.substring(0, w.length-2)) + 315 + 'px'
+
+    // update + btn
+    updateAddCardBtnInCard(document.getElementById(column_data.create_date).getElementsByClassName("add_card_btn")[0])
+
+    // update draggable content
+    updateColumnDragEffect(document.getElementById(column_data.create_date))
+    
+}
+
+
+function addNewCard(card_data, column_id) {
+
+    const card_container = document.getElementById(column_id)
+
+    card_container.innerHTML += `<div class="card_box" draggable="true" id="${card_data.create_date}">
+    <div class="card_name"><h4>${card_data.name}</h4></div>
+    <div class="card_detail">${card_data.details}</div>
+    <div class="card_cat">${card_data.category}</div>
+    <div class="card_due">${card_data.due_date}</div>
+    <span class="edit_card"><a>edit</a></span>\t
+    <span class="remove_card"><a>remove</a></span>\t
+    <span class="timer"><a>spent: <span class="time_spent">0</span></a></span>
+    </div>`
+
+    var card_element = document.getElementById(card_data.create_date)
+    updateCardDragEffect(card_element)
+    updateRemoveCardBtnInCard(card_element.getElementsByClassName("remove_card")[0])
+    updateTimerBtnInCard(card_element.getElementsByClassName("timer")[0])
+}
 
 function updateColumnsHTML(columns) {
     // get columns
@@ -102,7 +141,7 @@ function updateColumnsHTML(columns) {
             <div class="card_due">${column.cards[i].due_date}</div>
             <span class="edit_card"><a>edit</a></span>\t
             <span class="remove_card"><a>remove</a></span>\t
-            <span class="start_timer"><a>spent: <span class="time_spent">0</span></a></span>
+            <span class="timer"><a>spent: <span class="time_spent">0</span></a></span>
             </div>`
         }
 
@@ -114,7 +153,7 @@ function updateColumnsHTML(columns) {
         return html
     }, '')
 
-    if (columns.length != 0) {
+    if (columns.length !== 0) {
         document.getElementsByTagName("BODY")[0].style.width = columns.length * 315 + 20 + 'px'
     }
 
@@ -122,50 +161,101 @@ function updateColumnsHTML(columns) {
     column_container.innerHTML = column_list_items
 
     updateManualBtns()
+
+}
+
+function updateManualBtns() {
+
+    // draggable function
+    var col_boxes = document.getElementsByClassName("column_list_element")
+    for (var i = 0; i < col_boxes.length; i++) {
+        updateColumnDragEffect(col_boxes[i])
+    }
+
+    // draggable function continued
+    var card_boxes = document.getElementsByClassName("card_box")
+    for (var i = 0; i < card_boxes.length; i++) {
+        updateCardDragEffect(card_boxes[i])
+    }
+
+    // add event listeners to + sign
+    var a_card_btn = document.getElementsByClassName('add_card_btn')
+    for (var i = 0; i < a_card_btn.length; i++) {
+        updateAddCardBtnInCard(a_card_btn[i])
+    }
+
+    // add event listeners to "remove" btn in card
+    var d_card_btn = document.getElementsByClassName("remove_card")
+    for (var i = 0; i < d_card_btn.length; i++) {
+        updateRemoveCardBtnInCard(d_card_btn[i])
+    }
+
+    // add event listener to timer
+    var card_timers = document.getElementsByClassName("timer") 
+    for (var i = 0; i < card_timers.length; i++) {
+        updateTimerBtnInCard(card_timers[i])
+    }
+}
+
+function changeTimerId(e_obj, start_id, card_id, column_id) {
+    if (start_id === "") {
+        console.log("start timer")
+        e_obj.target.id = card_id + "_" + column_id
+    } else {
+        console.log("end timer")
+    }
 }
 
 
-function updateManualBtns() {
-    var a_card_btn = document.getElementsByClassName('add_card_btn')
-    for (var i = 0; i < a_card_btn.length; i++) {
-        a_card_btn[i].addEventListener('click', (e) => {
-            ipcRenderer.send('new_card', e.target.id)
-        })
+//
+function updateColumnDragEffect(elem) {
+    elem.ondragover = (event) => {
+        event.preventDefault()
     }
+    elem.ondrop = (event) => {
+        event.preventDefault()
+        var data = event.dataTransfer.getData("text")
+        var child = document.getElementById(data)
+        var child_parent = document.getElementById(data).parentNode.id
 
-    var d_card_btn = document.getElementsByClassName("remove_card")
-    for (var i = 0; i < d_card_btn.length; i++) {
-        d_card_btn[i].addEventListener('click', (e) => {
-            ipcRenderer.send('del_card', e.target.parentNode.parentNode.id, e.target.parentNode.parentNode.parentNode.id)
-        })
-    }
-
-    var col_boxes = document.getElementsByClassName("column_list_element")
-    for (var i = 0; i < col_boxes.length; i++) {
-        col_boxes[i].ondragover = (event) => {
-            event.preventDefault()
-        }
-        col_boxes[i].ondrop = (event) => {
-            event.preventDefault()
-            var data = event.dataTransfer.getData("text")
-            var child = document.getElementById(data)
-            var child_parent = document.getElementById(data).parentNode.id
-
-            // check if user actually moved box to another column
-            if (child_parent != event.target.id) {
-                document.getElementById(data).remove()
-                event.target.appendChild(child)
-                ipcRenderer.send('transfer_card', child_parent, event.target.id, data)
-            }
+        // check if user actually moved box to another column
+        if (child_parent != event.target.id) {
+            document.getElementById(data).remove()
+            event.target.appendChild(child)
+            ipcRenderer.send('transfer_card', child_parent, event.target.id, data)
         }
     }
+}
 
-    var card_boxes = document.getElementsByClassName("card_box")
-    for (var i = 0; i < card_boxes.length; i++) {
-        card_boxes[i].ondragstart = (event) => {
-            event.dataTransfer.setData("text", event.target.id)
-            console.log(event.target.id)
-        }
+function updateCardDragEffect(elem) {
+    elem.ondragstart = (event) => {
+        event.dataTransfer.setData("text", event.target.id)
+        console.log(event.target.id)
     }
+}
 
+function updateAddCardBtnInCard(elem) {
+    elem.addEventListener('click', (e) => {
+        ipcRenderer.send('new_card', e.target.id)
+    })
+}
+
+function updateRemoveCardBtnInCard(elem) {
+    elem.addEventListener('click', (e) => {
+        // card id          e.target.parentNode.parentNode.id
+        // column id        e.target.parentNode.parentNode.parentNode.id
+        ipcRenderer.send('del_card', e.target.parentNode.parentNode.id, e.target.parentNode.parentNode.parentNode.id)
+
+        document.getElementById(e.target.parentNode.parentNode.id).remove()
+    })
+}
+
+function updateTimerBtnInCard(elem) {
+    elem.addEventListener('click', (e) => {
+        // start id     e.target.id
+        // card id          e.target.parentNode.parentNode.id
+        // column id        e.target.parentNode.parentNode.parentNode.id
+        changeTimerId(e, e.target.id, e.target.parentNode.parentNode.id, e.target.parentNode.parentNode.parentNode.id)
+        console.log(e.target.id)
+    })
 }

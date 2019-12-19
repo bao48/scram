@@ -48,14 +48,12 @@ function main () {
 
     // recieving save_column sent by index.js and sending it back to index.js
     ipcMain.on('save_column', (event, column_data) => {
-        const updatedColumns = main_data.addColumn(column_data).columns
-        mainWindow.send('update_columns', updatedColumns)
+        main_data.columns = main_data.addColumn(column_data).columns
     })
 
     // recieving save_card sent by index.js and sending it back to index.js
     ipcMain.on('save_card', (event, card_data, column_id) => {
-        const updatedColumns = main_data.addCard(card_data, column_id).columns
-        mainWindow.send('update_columns', updatedColumns)
+        main_data.columns = main_data.addCard(card_data, column_id).columns
     })
 
     // recieving new_column sent by index.js and sending it back to index.js
@@ -65,8 +63,7 @@ function main () {
 
     // recieving new_column sent by index.js and sending it back to index.js
     ipcMain.on('del_card', (event, card_id, column_id) => {
-        const updatedColumns = main_data.deleteCard(card_id, column_id).columns
-        mainWindow.send('update_columns', updatedColumns)
+        main_data.columns = main_data.deleteCard(card_id, column_id).columns
     })
     
     ipcMain.on('transfer_card', (event, start_col_id, end_col_id, card_id) => {
