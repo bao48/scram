@@ -72,6 +72,23 @@ function main () {
         mainWindow.send('update_timer', card_id, timerStatus, timeWorked)
     })
 
+    ipcMain.on('edit_card', (event, card_id, column_id) => {
+        for(var i = 0; i < main_data.columns.length; i++) {
+            console.log(main_data.columns[i])
+            console.log(main_data.columns[i].cards)
+            if (parseInt(main_data.columns[i].create_date) === parseInt(column_id)) {
+                for (var j = 0; j < main_data.columns[i].cards.length; j++) {
+                    console.log("create_date: " + main_data.columns[i].cards[j].create_date + " card_id: " + card_id + " match: " + (parseInt(main_data.columns[i].cards[j].create_date) === parseInt(card_id)))
+                    if (parseInt(main_data.columns[i].cards[j].create_date) === parseInt(card_id)) {
+                        mainWindow.send('card_info', main_data.columns[i].cards[j])
+                        return
+                    }
+                }
+            }
+        }
+        console.error("No matching columns found. Card id: " + card_id + " column_id: " + column_id )
+    })
+
 }
 
 app.on('ready', main)

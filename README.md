@@ -8,6 +8,7 @@ npm init
 npm install --save-dev electron
 ```
 
+
 ### Where is my data stored?
 Electron stores data in an App Data folder. This is where the data should be stored:
 * **Linux**: ~/.config/<App Name>

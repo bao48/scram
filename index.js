@@ -79,9 +79,22 @@ ipcRenderer.on('update_columns', (event, columns) => {
     updateColumnsHTML(columns)
 })
 
+ipcRenderer.on('card_info', (event, card) => {
+    console.log(card)
+
+    var form_elements = document.forms["card-inputs"].elements
+    form_elements[0].value = card.name
+    form_elements[1].value = card.details
+    form_elements[2].value = card.category
+    form_elements[3].value = card.due_date
+
+    document.getElementById("add_card").title = card.column_id + "_" + card.create_date + "_btn"
+
+    document.getElementById("add_card").style.display = "block"
+})
+
 ipcRenderer.on('update_timer', (event, card_id, timer_status, time_worked) => {
     const card_container = document.getElementById(card_id).getElementsByClassName("timer")[0]
-
     var spent = time_worked
     if (timer_status === "ON") {
         var timerId = setInterval(function() {
@@ -219,6 +232,12 @@ function updateManualBtns() {
     for (var i = 0; i < card_timers.length; i++) {
         updateTimerBtnInCard(card_timers[i])
     }
+
+    // add event listener to edit
+    var card_edit = document.getElementsByClassName("edit_card")
+    for (var i = 0; i < card_edit.length; i++) {
+        updateEditBtnInCard(card_edit[i])
+    }
 }
 
 // updating all the btns
@@ -280,4 +299,59 @@ function updateTimerBtnInCard(elem) {
         }
         ipcRenderer.send('timer', node.id, node.parentNode.id)
     })
+}
+
+function updateEditBtnInCard(elem) {
+    elem.addEventListener('click', (e) => {
+        var node = e.target
+        while (!node.id || !node.parentNode.id || node.id.length !== node.parentNode.id.length) {
+            node = node.parentNode
+        }
+        ipcRenderer.send('edit_card', node.id, node.parentNode.id)
+
+        document.getElementById("save_card").id = "save_edit_card"
+        document.getElementById("save_edit_card").addEventListener('click', () => {
+            var form_elements = document.forms["card-inputs"].elements
+
+            console.log("form elements")
+
+            console.log(form_elements)
+
+
+            var ids = document.getElementById("add_card").title
+            ids = ids.substring(0, ids.length-4)
+            var column_id = parseInt(ids.substring(0, parseInt(ids.length/2)))
+            var card_id = parseInt(ids.substring(parseInt(ids.length/2)+1, ids.length))
+        
+            console.log("col_id", column_id)
+        
+            var card_data = new Card(form_elements[0].value, form_elements[1].value, form_elements[2].value, form_elements[3].value, column_id, card_id)
+        
+            form_elements[0].value = ''
+            form_elements[1].value = ''
+            form_elements[2].value = ''
+            form_elements[3].value = ''
+        
+            // ipcRenderer.send('edit_card', card_data, column_id)
+        
+            editOldCard(card_data)
+        
+            document.getElementById('add_card').style.display = "none"
+        })
+    })
+}
+
+function editOldCard(card_data) {
+    console.log(card_data)
+    var card_container = document.getElementById(card_data.create_date)
+    console.log(card_container.innerHTML)
+    card_container.innerHTML = `<div class="card_box" draggable="true" id="${card_data.create_date}">
+    <div class="card_name"><h4>${card_data.name}</h4></div>
+    <div class="card_detail">${card_data.details}</div>
+    <div class="card_cat">${card_data.category}</div>
+    <div class="card_due">${card_data.due_date}</div>
+    <span class="edit_card"><a>edit</a></span>\t
+    <span class="remove_card"><a>remove</a></span>\t
+    <span class="timer"><a>spent: <span class="time_spent">0</span></a></span>
+    </div>`
 }
