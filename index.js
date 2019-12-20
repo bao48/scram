@@ -33,7 +33,10 @@ document.getElementById('save_column').addEventListener('click', () => {
     document.getElementById('add_column').style.display = "none"
 })
 
-document.getElementById('save_card').addEventListener('click', () => {
+document.getElementById('save_card').addEventListener('click', saveCardFunc)
+
+function saveCardFunc() {
+    console.log("save card!")
 
     var form_elements = document.forms["card-inputs"].elements
     var column_id = document.getElementById("add_card").title
@@ -53,7 +56,7 @@ document.getElementById('save_card').addEventListener('click', () => {
     addNewCard(card_data, column_id)
 
     document.getElementById('add_card').style.display = "none"
-})
+}
 
 document.getElementById('add_column').addEventListener('click', (e) => {
     var isClickInside = document.getElementById('col_overlay_inner_box').contains(e.target)
@@ -309,7 +312,10 @@ function updateEditBtnInCard(elem) {
         }
         ipcRenderer.send('edit_card', node.id, node.parentNode.id)
 
+        document.getElementById("save_card").removeEventListener('click', saveCardFunc)
+
         document.getElementById("save_card").id = "save_edit_card"
+
         document.getElementById("save_edit_card").addEventListener('click', () => {
             var form_elements = document.forms["card-inputs"].elements
 
@@ -326,12 +332,14 @@ function updateEditBtnInCard(elem) {
             console.log("col_id", column_id)
         
             var card_data = new Card(form_elements[0].value, form_elements[1].value, form_elements[2].value, form_elements[3].value, column_id, card_id)
-        
+            console.log(card_data)
+
             form_elements[0].value = ''
             form_elements[1].value = ''
             form_elements[2].value = ''
             form_elements[3].value = ''
         
+
             // ipcRenderer.send('edit_card', card_data, column_id)
         
             editOldCard(card_data)
@@ -345,13 +353,13 @@ function editOldCard(card_data) {
     console.log(card_data)
     var card_container = document.getElementById(card_data.create_date)
     console.log(card_container.innerHTML)
-    card_container.innerHTML = `<div class="card_box" draggable="true" id="${card_data.create_date}">
+
+    card_container.innerHTML = `
     <div class="card_name"><h4>${card_data.name}</h4></div>
     <div class="card_detail">${card_data.details}</div>
     <div class="card_cat">${card_data.category}</div>
     <div class="card_due">${card_data.due_date}</div>
     <span class="edit_card"><a>edit</a></span>\t
     <span class="remove_card"><a>remove</a></span>\t
-    <span class="timer"><a>spent: <span class="time_spent">0</span></a></span>
-    </div>`
+    <span class="timer"><a>spent: <span class="time_spent">0</span></a></span>`
 }
