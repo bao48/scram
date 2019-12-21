@@ -96,9 +96,17 @@ class DataStore extends Store {
                 return [this.saveColumns(), timerStatus, timeWorked]
             }
         }
-
         console.error("No matching columns found. Card id " + card_id + " column_id " + column_id )
-
+    }
+    
+    replaceCard(card) {
+        console.log(this.columns)
+        for (var i = 0; i < this.columns.length; i++) {
+            if (this.columns[i].create_date === card.column_id) {
+                this.columns[i] = this.columns[i].reviseCard(card)
+                return this.saveColumns()
+            }
+        }
     }
 
 }

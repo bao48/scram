@@ -89,6 +89,10 @@ function main () {
         console.error("No matching columns found. Card id: " + card_id + " column_id: " + column_id )
     })
 
+    ipcMain.on('edit_card_file', (event, card) => {
+        console.log("edit card!")
+        main_data.columns = main_data.replaceCard(card)
+    })
 }
 
 app.on('ready', main)

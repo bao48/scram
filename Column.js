@@ -57,6 +57,15 @@ class Column {
             }
         }
     }
+
+    reviseCard(card) {
+        for (var i = 0; i < this.cards.length; i++) {
+            if (this.cards[i].create_date == card.create_date) {
+                this.cards[i] = new Card().createCardFromDataStore(card)
+                return this
+            }
+        }
+    }
 }
 
 module.exports = Column

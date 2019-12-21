@@ -340,7 +340,7 @@ function updateEditBtnInCard(elem) {
             form_elements[3].value = ''
         
 
-            // ipcRenderer.send('edit_card', card_data, column_id)
+            ipcRenderer.send('edit_card_file', card_data)
         
             editOldCard(card_data)
         
