@@ -112,6 +112,23 @@ ipcRenderer.on('update_timer', (event, card_id, timer_status, time_worked) => {
     
 })
 
+function updateTimerCardReloaded(card_id, timer_status, time_worked) {
+    console.log(" card_id " + card_id)
+    const card_container = document.getElementById(card_id).getElementsByClassName("timer")[0]
+    var spent = time_worked
+    if (timer_status === "ON") {
+        var timerId = setInterval(function() {
+            console.log(spent)
+            card_container.getElementsByClassName("time_spent")[0].innerHTML = formatTime(spent)
+            spent += 1
+        }, 1000)
+        card_container.id = timerId
+    } else {
+        clearInterval(card_container.id)
+    }
+    
+}
+
 function addNewColumn(column_data) {
     const column_container = document.getElementById('column_container')
 
@@ -151,6 +168,8 @@ function updateColumnsHTML(columns) {
     // get columns
     const column_container = document.getElementById('column_container')
 
+    var timerStartNeeded = []
+
     // create html string
     const column_list_items = columns.reduce((html, column) => {
 
@@ -166,6 +185,12 @@ function updateColumnsHTML(columns) {
             <span class="remove_card"><a>remove</a></span>\t
             <span class="timer"><a>spent: <span class="time_spent">${formatTime(column.cards[i].timeWorked)}</span></a></span>
             </div>`
+            console.log("timer length " + column.cards[i].timers.length)
+            console.log("createdate " + column.cards[i].create_date)
+
+            if (column.cards[i].timers.length > 0 && column.cards[i].timers[column.cards[i].timers.length-1].status === "ON") {
+                timerStartNeeded.push([column.cards[i].create_date, column.cards[i].timers[column.cards[i].timers.length-1].status, column.cards[i].timeWorked])
+            }
         }
 
         html += `<div class="column_list_element" id="${column.create_date}">
@@ -183,8 +208,11 @@ function updateColumnsHTML(columns) {
     // set list html to the todo list items
     column_container.innerHTML = column_list_items
 
-    updateManualBtns()
+    for (var i = 0; i < timerStartNeeded.length; i++) {
+        updateTimerCardReloaded(timerStartNeeded[i][0], timerStartNeeded[i][1], timerStartNeeded[i][2])
+    }
 
+    updateManualBtns()
 }
 
 function formatTime(sec) {
@@ -272,7 +300,7 @@ function updateColumnDragEffect(elem) {
         if (child_parent.id != newtarget.id) {
             document.getElementById(data).remove()
             newtarget.appendChild(child)
-            ipcRenderer.send('transfer_card', child_parent.id, newtarget.id, data)
+            ipcRenderer.send('transfer_card', child_parent.id, newtarget .id, data)
         }
     }
 }
