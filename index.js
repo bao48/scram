@@ -201,7 +201,7 @@ function formatTime(sec) {
     }
     min %= 60
 
-    return hr + "h" + min + "m" + time_in_sec + "s"
+    return hr + "h" + min + "m" + sec + "s"
 }
 
 function updateManualBtns() {
