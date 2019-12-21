@@ -85,3 +85,9 @@ a:hover {
     font-size: 15px;
     padding: 7px;
 }
+
+#card_details {
+    width: 100%;
+    display: block;
+    height: 250px;
+}
