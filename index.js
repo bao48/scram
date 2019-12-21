@@ -248,17 +248,31 @@ function updateColumnDragEffect(elem) {
     elem.ondragover = (event) => {
         event.preventDefault()
     }
+
     elem.ondrop = (event) => {
         event.preventDefault()
+
         var data = event.dataTransfer.getData("text")
+        
+
         var child = document.getElementById(data)
-        var child_parent = document.getElementById(data).parentNode.id
+        var child_parent = document.getElementById(data).parentNode
+
+        console.log("child " + child)
+        console.log("child_parent " + child_parent.id)
+        console.log("child_parent " + child_parent.parentNode.id)
+
+        var newtarget = event.target
+
+        while (newtarget.className !== "column_list_element") {
+            newtarget = newtarget.parentNode
+        }
 
         // check if user actually moved box to another column
-        if (child_parent != event.target.id) {
+        if (child_parent.id != newtarget.id) {
             document.getElementById(data).remove()
-            event.target.appendChild(child)
-            ipcRenderer.send('transfer_card', child_parent, event.target.id, data)
+            newtarget.appendChild(child)
+            ipcRenderer.send('transfer_card', child_parent.id, newtarget.id, data)
         }
     }
 }
