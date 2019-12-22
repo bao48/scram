@@ -98,8 +98,11 @@ ipcRenderer.on('card_info', (event, card) => {
 
 ipcRenderer.on('update_timer', (event, card_id, timer_status, time_worked) => {
     const card_container = document.getElementById(card_id).getElementsByClassName("timer")[0]
+    const orig_color = card_container.getElementsByClassName("time_spent")[0].parentNode.style.color
+    card_container.getElementsByClassName("time_spent")[0].style.color = "#ff0000"
     var spent = time_worked
     if (timer_status === "ON") {
+        card_container.getElementsByClassName("time_spent")[0].style.color = "#ff0000"
         var timerId = setInterval(function() {
             console.log(spent)
             card_container.getElementsByClassName("time_spent")[0].innerHTML = formatTime(spent)
@@ -108,13 +111,18 @@ ipcRenderer.on('update_timer', (event, card_id, timer_status, time_worked) => {
         card_container.id = timerId
     } else {
         clearInterval(card_container.id)
+        card_container.getElementsByClassName("time_spent")[0].style.color = orig_color
     }
     
 })
 
 function updateTimerCardReloaded(card_id, timer_status, time_worked) {
     console.log(" card_id " + card_id)
+    
     const card_container = document.getElementById(card_id).getElementsByClassName("timer")[0]
+    const orig_color = card_container.getElementsByClassName("time_spent")[0].parentNode.style.color
+    card_container.getElementsByClassName("time_spent")[0].style.color = "#ff0000"
+
     var spent = time_worked
     if (timer_status === "ON") {
         var timerId = setInterval(function() {
@@ -125,6 +133,7 @@ function updateTimerCardReloaded(card_id, timer_status, time_worked) {
         card_container.id = timerId
     } else {
         clearInterval(card_container.id)
+        card_container.getElementsByClassName("time_spent")[0].style.color = orig_color
     }
     
 }
