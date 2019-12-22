@@ -55,6 +55,7 @@ body,
     margin: 2px;
     vertical-align: top;
     overflow-y: scroll;
+    padding-top: 0px;
 }
 
 .card_box {
@@ -90,4 +91,13 @@ a:hover {
     width: 100%;
     display: block;
     height: 250px;
+}
+
+.column_header {
+    position: absolute;
+    background-color: #A0A0A0;
+    width: 290px;
+}
+.card_list_container {
+    margin-top: 40px;
 }

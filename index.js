@@ -141,9 +141,10 @@ function updateTimerCardReloaded(card_id, timer_status, time_worked) {
 function addNewColumn(column_data) {
     const column_container = document.getElementById('column_container')
 
-    column_container.innerHTML += `<div class="column_list_element" id="${column_data.create_date}">
+    column_container.innerHTML += `<div class="column_list_element">
     <div class="column_header"><span class="column_name">${column_data.name}</span>
     <span class="add_card_btn" id="${column_data.create_date}_btn">+</span></div>
+    <div class="card_list_container" id="${column_data.create_date}"></div>
     </div>`
 
     var w = document.getElementsByTagName("BODY")[0].style.width
@@ -202,10 +203,12 @@ function updateColumnsHTML(columns) {
             }
         }
 
-        html += `<div class="column_list_element" id="${column.create_date}">
+        html += `<div class="column_list_element">
                     <div class="column_header"><span class="column_name">${column.name}</span>
                     <span class="add_card_btn" id="${column.create_date}_btn">+</span></div>
+                    <div class="card_list_container" id="${column.create_date}">
                     ${h}
+                    </div>
                 </div>`
         return html
     }, '')
@@ -290,19 +293,27 @@ function updateColumnDragEffect(elem) {
         event.preventDefault()
 
         var data = event.dataTransfer.getData("text")
-        
+        console.log("dataaaaa")
+        console.log(data)
 
         var child = document.getElementById(data)
         var child_parent = document.getElementById(data).parentNode
 
-        console.log("child " + child)
+        console.log("child " + child.id)
         console.log("child_parent " + child_parent.id)
         console.log("child_parent " + child_parent.parentNode.id)
 
         var newtarget = event.target
+        console.log(event)
+        console.log(newtarget)
 
-        while (newtarget.className !== "column_list_element") {
-            newtarget = newtarget.parentNode
+        while (newtarget.className !== "card_list_container") {
+            // if dropped in the box, will need child nodes
+            if (newtarget.className === 'column_list_element') {
+                newtarget = newtarget.childNodes[3]
+            } else {
+                newtarget = newtarget.parentNode
+            }
         }
 
         // check if user actually moved box to another column
