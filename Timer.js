@@ -1,12 +1,14 @@
 class Timer {
 
     constructor(start, end, status) {
+        // start and end times are in ms
+        // diff is in s
         this.start = start || Math.floor(new Date().getTime()/1000)*1000
         this.end = end || ""
 
         this.status = (this.end === "") ? "ON": "OFF"
 
-        this.diff = (this.status === "OFF") ? (this.end - this.start)/1000 : 0
+        this.diff = (this.status === "OFF") ? (this.end - this.start)/1000 :  (Math.floor(new Date().getTime()/1000)*1000 - this.start)/1000
     }
 
     stopTimer() {
@@ -17,7 +19,7 @@ class Timer {
 
     updateStatusAndTime() {
         this.status = (this.end === "") ? "ON": "OFF"
-        this.diff = (this.status === "OFF") ? (this.end - this.start)/1000 : 0
+        this.diff = (this.status === "OFF") ? (this.end - this.start)/1000 : (Math.floor(new Date().getTime()/1000)*1000 - this.start)/1000
         return this
     }
 

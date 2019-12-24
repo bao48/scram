@@ -24,14 +24,18 @@ class Card {
         this.create_date = data.create_date
         this.num = data.num
         this.timers = this.turnArrayIntoTimers(data.timers)
-        this.timeWorked = data.timeWorked
 
+        this.timeWorked = this.timers.length === 0 ? data.timeWorked : data.timeWorked + this.timers[this.timers.length - 1].diff
         return this
     }
 
     turnArrayIntoTimers(arr) {
         var new_arr = []
         for (var i = 0; i < arr.length; i++) {
+            if (i + 1 == arr.length && arr[i].status === "ON") {
+                arr[i].diff = (Math.floor(new Date().getTime()/1000)*1000 - arr[i].start)/1000
+                console.log(arr[i])
+            }
             new_arr.push(new Timer().createTimerFromDataStore(arr[i]))
         }
         return new_arr
@@ -39,14 +43,12 @@ class Card {
 
     startOrEndTimer() {
         var last_index = this.timers.length
-        console.log(this.timers)
-        console.log(last_index)
-        console.log(this.timers[last_index-1])
         if (last_index == 0 || this.timers[last_index-1].status == "OFF") {
             return [this.addTimerToCard(), "ON", this.timeWorked]
         } else {
+            var pdiff = this.timers[last_index-1].diff
             this.timers[last_index-1] = this.timers[last_index-1].stopTimer()
-            this.timeWorked += this.timers[last_index-1].diff
+            this.timeWorked += this.timers[last_index-1].diff - pdiff
             return [this, "OFF", this.timeWorked]
         }
     }
